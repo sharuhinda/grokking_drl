@@ -1,3 +1,8 @@
+"""
+This file contains different types of environments described in
+'Grokking Deep Reinforcement Learning' by Morales
+"""
+
 from collections import namedtuple
 import numpy as np
 
@@ -6,16 +11,19 @@ import numpy as np
 Transition = namedtuple('StepResult', ['proba', 'next_state', 'reward', 'is_terminal'])
 
 class Environment:
-    
+    """
+    General class to provide common API functions for child classes
+    """
     P = {
         0: {
             0: [Transition(1.0, 0, 0., True)]
         }
     }
     
-    def __init__(self, start_state=0) -> None:
+    def __init__(self, start_state=0, description=None) -> None:
         self.start_state = start_state
         self.cur_state = start_state
+        self.description = description
 
     def reset(self):
         self.cur_state = self.start_state
@@ -31,6 +39,9 @@ class Environment:
         p = np.array([x.proba for x in result])
         i = np.random.choice(len(result), p=p)
         return result[i]
+    
+    def __str__(self):
+        return f'Environment: {self.__class__.__name__}'
     
 
 class BW(Environment):
